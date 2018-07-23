@@ -222,9 +222,8 @@ def threads(type, num, args1, args2):
 def usage():
   print("""
   usage: 
-    DoS: python tor.py -u http://target.com/ -t 100 -c 100
-    Wordpress/nginx/slowloris/: python tor.py -u http://target.com/ -t 100 -a {} -c 100
-    Port Scanner/Show HTTP Header/Link Grabber/Trap Site/FingerPrint/: python tor.py -u http://target.com/ -c 100
+    DoS: python tor.py -u http://target.onion/ -t 100 -c 100
+    Wordpress/nginx/slowloris/: python tor.py -u http://target.onion/ -t 100 -a {} -c 100
     """)
   exit()
 
