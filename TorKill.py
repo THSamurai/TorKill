@@ -21,7 +21,7 @@ print("""
   [+]███████████████████████████████[+]                                                     
   """)
 
-print(Fore.Green + "  [+] " + Fore.WHITE + " Version 0.2")
+print(Fore.GREEN + "  [+] " + Fore.WHITE + " Version 0.2")
 
 print(Fore.WHITE + """
   {1}  Directory Brute  {2}  Wordpress DoS
