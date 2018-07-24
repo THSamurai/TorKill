@@ -6,6 +6,7 @@ from BeautifulSoup import *
 from sockshandler import SocksiPyHandler
 from colorama import init, Fore, Back, Style
 
+
 print("""
 
 
@@ -147,7 +148,7 @@ def deanon():
   print('\n' + '[+]' + ' Starting Ngrok...' + '\n')
   subp.Popen(['ngrok', 'http', '80'], stdin=subp.PIPE,stderr=subp.PIPE, stdout=subp.PIPE)
   time.sleep(10)
-  r1 = requests.get('{}'.format(api))
+  r1 = requests.get(api)
   page = r1.content
   json1 = json.loads(page)
   for item in json1['tunnels']:
